@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>Bangumi index</title>
+
+<style type="text/css">
+
+#download_name { width: 100%; }
+#example2 { width: 150px; }
+
+select { width: 250px; }
+
+textarea {
+width: 250px;
+height: 10em;
+}
+
+</style>
+
+</head>
+<body>
+  <h1>Select BT</h1>
+  <img src="/qpqpqpqpqp/{{cover_path}}" height=300px><br>
+  <ul>
+    {% for bt in bts %}
+    <li>{{bt[1]}}
+        <form action="/qpqpqpqpqp/manual_add_bt">
+          <input type="hidden" id="bid" name="bid" value="{{bid}}">
+          <input type="hidden" id="url" name="url" value="{{bt[0]}}">
+          集数：<input type="text" id="ep" name="ep">
+          <input type="submit" value="选择该资源">
+        </form>
+    </li>
+    {% end %}
+  </ul>
+</form> 
+
+</body>
+</html>

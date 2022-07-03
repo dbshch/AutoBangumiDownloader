@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>Bangumi index</title>
+
+<style type="text/css">
+
+#download_name { width: 100%; }
+#example2 { width: 150px; }
+
+select { width: 250px; }
+
+textarea {
+width: 250px;
+height: 10em;
+}
+
+</style>
+
+</head>
+<body>
+  <h1>Episodes</h1>
+  <ul>
+    {% for update in episodes %}
+    <li><a href="/qpqpqpqpqp/{{update[2]}}">{{ update[0] }} {{ update[1] }}</a> {{ update[3] }} 
+      {% if update[4] != 100 %} <progress id="file" value="{{update[4]}}" max="100"> {{update[4]}}% </progress> {%end%}</li>
+    {% end %}
+  </ul>
+  <br>
+  <br>
+  <a href="/qpqpqpqpqp/manual/{{bid}}">Manually Add Episode.</a>
+</form> 
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>Edit bangumi</title>
+
+<style type="text/css">
+
+#download_name { width: 100%; }
+#example2 { width: 150px; }
+
+select { width: 250px; }
+
+textarea {
+width: 250px;
+height: 10em;
+}
+
+</style>
+
+</head>
+<body>
+  <h1>Bangumis</h1>
+  <ul>
+    {% for bangumi in bangumis %}
+    <li>{{ bangumi[1] }} <a href="/delete?bangumi={{bangumi[1]}}">delete</a></li>
+    {% end %}
+  </ul>
+</form> 
+
+</body>
+</html>

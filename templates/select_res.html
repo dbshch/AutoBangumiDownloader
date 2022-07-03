@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>Bangumi index</title>
+
+<style type="text/css">
+
+#download_name { width: 100%; }
+#example2 { width: 150px; }
+
+select { width: 250px; }
+
+textarea {
+width: 250px;
+height: 10em;
+}
+
+</style>
+
+</head>
+<body>
+  <h1>Select BT</h1>
+  <img src="/qpqpqpqpqp/{{cover_path}}" height=300px><br>
+  BT with Pattern:
+  <ul>
+    {% for pat in bt_p %}
+    <li>{{pat}} {% for i in bt_p[pat] %}{{i}}{% end %}
+        <form action="/qpqpqpqpqp/submit">
+          <input type="hidden" id="url" name="url" value="{{url}}">
+          <input type="hidden" id="download_name" name="download_name" value="{{pat}}">
+          <input type="text" id="bangumi_name" name="bangumi_name">
+          <input type="submit" value="选择该资源">
+        </form>
+    </li>
+    {% end %}
+  </ul>
+  Non Pattern:
+  <ul>
+    {% for k in single_bts %}
+    <li>{{k}}
+        <form action="/qpqpqpqpqp/add_bt">
+          <input type="hidden" id="cover" name="cover" value="{{cover_path}}">
+          <input type="hidden" id="bangumi_url" name="bangumi_url" value="{{url}}">
+          <input type="hidden" id="url" name="url" value="{{single_bts[k]}}">
+          <input type="text" id="bangumi_name" name="bangumi_name">
+          <input type="submit" value="选择该资源">
+        </form>
+    </li>
+    {% end %}
+  </ul>
+</form> 
+
+</body>
+</html>
