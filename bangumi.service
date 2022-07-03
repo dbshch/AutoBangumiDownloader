@@ -1,0 +1,11 @@
+[Unit]
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+WorkingDirectory=YOUR_DIRECTORY
+ExecStart=/usr/bin/python3 YOUR_DIRECTORY/main.py
+killMode=process
+
+[Install]
+WantedBy=multi-user.target

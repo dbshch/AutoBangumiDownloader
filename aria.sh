@@ -1,0 +1,1 @@
+nohup aria2c --conf-path=aria.conf --enable-rpc --rpc-listen-all --rpc-allow-origin-all &
