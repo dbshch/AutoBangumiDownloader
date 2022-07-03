@@ -17,7 +17,7 @@ def filter_nyaa_bts(bts, ep):
                 if m.start() > 2 and btn[m.start():m.start()+1] == "全":
                     continue
                 kw = m.start() > 2 and btn[m.start()-1:m.start()+1]
-                if kw == "Hi" or kw == "MP" or kw == "mp":
+                if kw == "Hi" or kw == "MP" or kw == "mp" or kw == "IG":
                     continue
                 if btn[m.start()+len(m.group(1))-1:m.start()+len(m.group(1))] == "月":
                     continue
