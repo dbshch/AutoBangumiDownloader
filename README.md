@@ -12,7 +12,11 @@ Install dependencies
 
 Import SQL database
 
-```mysql -u username -p < file.sql```
+```mysql -u username -p < Bangumis.sql```
+
+Change the sql table `Info`, add an entry with the site of BT之家 (not provided, find it in your own way).
+
+![sample](doc/info.jpg)
 
 Check and change the configuration files: 
 
@@ -71,6 +75,6 @@ Choose a desired pattern, fill the corresponding textbox (below the pattern text
 
 If some episodes are missing, you can manually add it here.
 
-The second method of add an anime is in the end of the index page. Fill the three text boxes with the bangumi url in BT之家, torrent pattern and the bangumi's name. This method is not recommended now.
+The second method of adding an anime is in the end of the index page. Fill the three text boxes with the bangumi url in BT之家, torrent pattern and the bangumi's name. This method is not recommended now.
 
 By default, the site fetch the updates every 4 hours. If you want to manually fetch the updates, click the Refresh button at the top of the page. It will find and download the newest episodes. This process takes a lot of time. Therefore, if a bangumi season ended, you should manually change the corresponding sql table entry `ended` in `Bangumi` to 1 (directly change the sql, no UI for now). Then the site will not fetch the episodes for this bangumi.
