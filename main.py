@@ -150,8 +150,8 @@ class ManualAddBTHandler(tornado.web.RequestHandler):
         site = await DBquery("SELECT * FROM Info")
         site = site[0][0]
         data = await DBquery("SELECT * FROM Bangumi WHERE `bid`=%d" % bid)
-        path = download_single_bt(site, url, data[0][3])
-        await addEpisode(data[0][3], bid, ep, path)
+        (path, rpc_id) = download_single_bt(site, url, data[0][3])
+        await addEpisode(data[0][3], bid, ep, path, rpc_id)
         self.redirect(SUB_URL)
 
 class RefreshHandler(tornado.web.RequestHandler):

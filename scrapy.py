@@ -150,7 +150,7 @@ def parse_bts(bts):
     tmp = {}
     for bt in bts:
         btn = bt[1]
-        pattern_regex = re.compile(r'(?=([^0-9][0-9]{1,2}[^0-9]))')
+        pattern_regex = re.compile(r'(?=([^0-9A-Za-z][0-9]{1,2}[^0-9A-Za-z]))')
         flg = 0
         if btn[1:11] == "SubsPlease":
             continue

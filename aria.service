@@ -1,0 +1,11 @@
+[Unit]
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+WorkingDirectory=YOUR_DIRECTORY
+ExecStart=/usr/bin/aria2c --conf-path=aria.conf --enable-rpc --rpc-listen-all --rpc-allow-origin-all
+killMode=process
+
+[Install]
+WantedBy=multi-user.target

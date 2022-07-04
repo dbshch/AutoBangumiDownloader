@@ -9,7 +9,7 @@ def filter_nyaa_bts(bts, ep):
     filtered = []
     # priority = PriorityQueue()
     for bt in bts:
-        pattern_regex = re.compile(r'(?=([^0-9][0-9]{1,2}[^0-9]))')
+        pattern_regex = re.compile(r'(?=([^0-9A-Za-z][0-9]{1,2}[^0-9A-Za-z]))')
         flg = 0
         btn = bt[1]
         for m in pattern_regex.finditer(btn):
