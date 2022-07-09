@@ -19,11 +19,11 @@ height: 10em;
 </head>
 <body>
   <h1>Select BT</h1>
-  <img src="/qpqpqpqpqp/{{cover_path}}" height=300px><br>
+  <img src="{{sub_url}}{{cover_path}}" height=300px><br>
   <ul>
     {% for bt in bts %}
     <li>{{bt[1]}}
-        <form action="/qpqpqpqpqp/manual_add_bt">
+        <form action="{{sub_url}}manual_add_bt">
           <input type="hidden" id="bid" name="bid" value="{{bid}}">
           <input type="hidden" id="url" name="url" value="{{bt[0]}}">
           集数：<input type="text" id="ep" name="ep">

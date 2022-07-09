@@ -31,20 +31,23 @@ async def download_bt(site, url, download_name, bangumi_name, downloaded_ep, bid
     existEps = []
     if bid != 0:
         existEps = await getExistEp(bid)
-    nyaa_magnets = await getNyaaMagnet(bangumi_name)
+    nyaa_magnets = []
+    if USE_NYAA:
+        nyaa_magnets = await getNyaaMagnet(bangumi_name)
     for seq in range(downloaded_ep + 1, 55):
         if seq in existEps:
             continue
-        res = filter_nyaa_bts(nyaa_magnets, seq)
-        if len(res) > 0:
-            opener=urllib.request.build_opener()
-            bt_url = res[0][2]
-            bt = opener.open(bt_url).read()
-            torrent = bencodepy.decode(bt)
-            bt_video_name = torrent[b'info'][b'name'].decode("utf-8")
-            rpc_id = aria_rpc.aria2.addTorrent(RPC_TOKEN, xmlrpc.client.Binary(bt), [], {"dir":dir_name})
-            updated.append((seq, "%s/%s/%s" % (VIDEO_DIR, bangumi_name, bt_video_name), rpc_id))
-            continue
+        if USE_NYAA:
+            res = filter_nyaa_bts(nyaa_magnets, seq)
+            if len(res) > 0:
+                opener=urllib.request.build_opener()
+                bt_url = res[0][2]
+                bt = opener.open(bt_url).read()
+                torrent = bencodepy.decode(bt)
+                bt_video_name = torrent[b'info'][b'name'].decode("utf-8")
+                rpc_id = aria_rpc.aria2.addTorrent(RPC_TOKEN, xmlrpc.client.Binary(bt), [], {"dir":dir_name})
+                updated.append((seq, "%s/%s/%s" % ("video", bangumi_name, bt_video_name), rpc_id))
+                continue
         f_name = file_name % seq
         name = download_name % seq
         regex4 = r'\<a href="(.+)" target="\_blank" rel="nofollow".+width=\"16\" height=\"16\" \/\>.+Raws.+%02d.+1920x1080.+\.torrent' % seq
@@ -71,7 +74,7 @@ async def download_bt(site, url, download_name, bangumi_name, downloaded_ep, bid
         bt_video_name = torrent[b'info'][b'name'].decode("utf-8")
         ext = bt_video_name.split(".")[-1]
         rpc_id = aria_rpc.aria2.addTorrent(RPC_TOKEN, xmlrpc.client.Binary(bt), [], {"dir":dir_name})
-        updated.append((seq, "%s/%s" % (dir_name, bt_video_name), rpc_id))
+        updated.append((seq, "%s/%s/%s" % ("video", bangumi_name, bt_video_name), rpc_id))
     return updated
 
 def download_single_bt(site, torrent_url, bangumi_name):
@@ -91,7 +94,7 @@ def download_single_bt(site, torrent_url, bangumi_name):
     torrent = bencodepy.decode(bt)
     bt_video_name = torrent[b'info'][b'name'].decode("utf-8")
     ext = bt_video_name.split(".")[-1]
-    video_path = "%s/%s/%s" % (VIDEO_DIR, bangumi_name, bt_video_name)
+    video_path = "%s/%s/%s" % ("video", bangumi_name, bt_video_name)
     # print(video_path)
     return (video_path, rpc_id)
 
@@ -104,14 +107,15 @@ def get_cover(site, bangumi_url):
     if len(cover) == 0:
         cover_regex = r'\<img src="(.+?)" style="max-width:871px;'
         cover = re.findall(cover_regex, data)
-    cover_path = ""
+    url_path = ""
     if len(cover) != 0:
         cover = html.unescape(cover[0])
         cover_file = opener.open('%s%s' % (site, cover))
-        cover_path = "covers/%s" % cover.split("/")[-1]
+        url_path = "covers/%s" % cover.split("/")[-1]
+        cover_path = "%s/%s" % (COVERS_DIR, cover.split("/")[-1])
         cover_path = cover_path.split("=")[-1]
         open(cover_path, 'wb').write(cover_file.read())
-    return cover_path
+    return url_path
 
 def search(site, name):
     name = urllib.parse.quote_plus(name)
@@ -132,17 +136,18 @@ def fetch_bts(site, url):
     if len(cover) == 0:
         cover_regex = r'\<img src="(.+?)" style="max-width:871px;'
         cover = re.findall(cover_regex, data)
-    cover_path = ""
+    url_path = ""
     if len(cover) != 0:
         cover = html.unescape(cover[0])
         cover_file = opener.open('%s%s' % (site, cover))
-        cover_path = "covers/%s" % cover.split("/")[-1]
+        url_path = "covers/%s" % cover.split("/")[-1]
+        cover_path = "%s/%s" % (COVERS_DIR, cover.split("/")[-1])
         cover_path = cover_path.split("=")[-1]
         open(cover_path, 'wb').write(cover_file.read())
 
     bt_regex = r'\<a href="(.+)" target="\_blank" rel="nofollow".+?\>(.+?.torrent).+'
     bts = re.findall(bt_regex, data)
-    return (cover_path, bts)
+    return (url_path, bts)
 
 def parse_bts(bts):
     single_bts = {}

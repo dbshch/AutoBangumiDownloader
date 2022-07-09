@@ -1,0 +1,2 @@
+http_proxy=http://[user:pwd]@ip:port/
+https_proxy=http://[user:pwd]@ip:port/

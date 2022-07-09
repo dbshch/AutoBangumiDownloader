@@ -68,12 +68,12 @@ class BangumiHandler(tornado.web.RequestHandler):
         b_info = await DBquery("SELECT `bangumi_name`,`direct` FROM Bangumi WHERE bid=%d" % int(bid))
         is_direct = b_info[0][1]
         if is_direct > 0:
-            self.redirect("%s%s/%s/" % (SUB_URL, VIDEO_DIR, b_info[0][0]))
+            self.redirect("%svideo/%s/" % (SUB_URL, b_info[0][0]))
             return
         # updates = await DBquery("SELECT `bangumi_name`,`ep`,`video_url`,`update_time`,`downloaded` FROM Episodes WHERE bid=%d ORDER BY update_time DESC" % int(bid))
         # updates = [ (ep[0], ep[1], ep[2], '-'.join(str(ep[3]).split(' ')[0].split('-')[1:])) for ep in updates]
         updates = await getEpisodes(bid)
-        self.render("bangumi.html", episodes=updates, bid=bid)
+        self.render("bangumi.html", sub_url=SUB_URL, episodes=updates, bid=bid)
 
 
 # class StatusHandler(tornado.web.RequestHandler):
@@ -105,7 +105,7 @@ class SearchHandler(tornado.web.RequestHandler):
         site = site[0][0]
         bangumi_name = self.get_argument("bangumi_name")
         res = search(site, bangumi_name)
-        self.render("search.html", results=res)
+        self.render("search.html", sub_url=SUB_URL, results=res)
 
 class ParseHandler(tornado.web.RequestHandler):
     async def get(self):
@@ -115,7 +115,7 @@ class ParseHandler(tornado.web.RequestHandler):
         url = self.get_argument("url")
         (cover_path, bts) = fetch_bts(site, url)
         (single_bts, bt_p) = parse_bts(bts)
-        self.render("select_res.html",
+        self.render("select_res.html", sub_url=SUB_URL,
             url=url, cover_path=cover_path, single_bts=single_bts, bt_p=bt_p)
 
 class AddBTHandler(tornado.web.RequestHandler):
@@ -140,7 +140,7 @@ class ManualAddHandler(tornado.web.RequestHandler):
         data = await DBquery("SELECT * FROM Bangumi WHERE `bid`=%d" % bid)
         cover_path = data[0][7]
         bts = fetch_bangumi_bts(site, data[0][1])
-        self.render("manual.html", cover_path=cover_path, bts=bts, bid=bid)
+        self.render("manual.html", sub_url=SUB_URL, cover_path=cover_path, bts=bts, bid=bid)
 
 class ManualAddBTHandler(tornado.web.RequestHandler):
     async def get(self):

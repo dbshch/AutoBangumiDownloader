@@ -22,7 +22,7 @@ height: 10em;
   <ul>
     {% for res in results %}
     <li>{{res[1]}}
-        <form action="/qpqpqpqpqp/parse">
+        <form action="{{sub_url}}parse">
           <input type="hidden" id="url" name="url" value="{{res[0]}}">
           <input type="hidden" id="bangumi_name" name="bangumi_name" value="{{res[1]}}">
           <input type="submit" value="选择该资源">

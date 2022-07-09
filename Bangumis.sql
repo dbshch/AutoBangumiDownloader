@@ -20,6 +20,7 @@
 --
 
 CREATE Database `Bangumis`;
+USE `Bangumis`;
 DROP TABLE IF EXISTS `Bangumi`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -30,7 +31,7 @@ CREATE TABLE `Bangumi` (
   `bangumi_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `updated` int(11) NOT NULL DEFAULT 0,
   `ended` int(11) NOT NULL DEFAULT 0,
-  `update_time` date NOT NULL DEFAULT current_timestamp(),
+  `update_time` datetime NOT NULL DEFAULT current_timestamp(),
   `cover` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `direct` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`bid`)
@@ -66,6 +67,7 @@ DROP TABLE IF EXISTS `Info`;
 CREATE TABLE `Info` (
   `site` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO `Info`(`site`) VALUES ("http://xxxxxx.com/");
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

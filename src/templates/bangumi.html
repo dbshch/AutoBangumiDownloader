@@ -21,13 +21,13 @@ height: 10em;
   <h1>Episodes</h1>
   <ul>
     {% for update in episodes %}
-    <li><a href="/qpqpqpqpqp/{{update[2]}}">{{ update[0] }} {{ update[1] }}</a> {{ update[3] }} 
+    <li><a href="{{sub_url}}{{update[2]}}">{{ update[0] }} {{ update[1] }}</a> {{ update[3] }} 
       {% if update[4] != 100 %} <progress id="file" value="{{update[4]}}" max="100"> {{update[4]}}% </progress> {%end%}</li>
     {% end %}
   </ul>
   <br>
   <br>
-  <a href="/qpqpqpqpqp/manual/{{bid}}">Manually Add Episode.</a>
+  <a href="{{sub_url}}manual/{{bid}}">Manually Add Episode.</a>
 </form> 
 
 </body>
