@@ -1,0 +1,52 @@
+<html>
+
+<head>
+  <title>Bangumi index</title>
+
+  <style type="text/css">
+    #download_name {
+      width: 100%;
+    }
+
+    #example2 {
+      width: 150px;
+    }
+
+    select {
+      width: 250px;
+    }
+
+    textarea {
+      width: 250px;
+      height: 10em;
+    }
+  </style>
+
+</head>
+
+<body>
+  <form action="refresh">
+    <input type="submit" value="Refresh" />
+  </form>
+  <h1>Search Resource</h1>
+  <form action="search">
+    <label for="bangumi_name">Resource name:</label><br>
+    <input type="text" id="bangumi_name" name="bangumi_name">
+    <input type="submit" value="Search">
+  </form>
+  <h1>Manually Add Bangumi</h1>
+  <form action="submit">
+    <label for="url">url:</label><br>
+    <input type="text" id="url" name="url"><br>
+
+    <label for="download_name">Torrent pattern:</label><br>
+    <input type="text" id="download_name" name="download_name"><br><br>
+
+    <label for="bangumi_name">Bangumi name:</label><br>
+    <input type="text" id="bangumi_name" name="bangumi_name"><br><br>
+    <input type="submit" value="Submit">
+  </form>
+
+</body>
+
+</html>

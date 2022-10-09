@@ -2,9 +2,9 @@ import urllib.request
 import urllib.parse
 import re
 import os
-import bencodepy
 import html
 import xmlrpc.client
+from utils import *
 from config import *
 from sql import *
 from nyaa import *
@@ -22,6 +22,7 @@ async def download_bt(site, url, download_name, bangumi_name, downloaded_ep, bid
     download_name = download_name.replace('.', r'\.')
     download_name = download_name.replace('(', r'\(')
     download_name = download_name.replace(')', r'\)')
+    download_name = download_name.replace(' ', r' +')
     opener=urllib.request.build_opener()
     # opener=urllib.request.URLopener(proxies)
     opener.addheaders=[heads]
@@ -43,16 +44,15 @@ async def download_bt(site, url, download_name, bangumi_name, downloaded_ep, bid
                 opener=urllib.request.build_opener()
                 bt_url = res[0][2]
                 bt = opener.open(bt_url).read()
-                torrent = bencodepy.decode(bt)
-                bt_video_name = torrent[b'info'][b'name'].decode("utf-8")
+                bt_video_name = get_bt_files(bt)[0]
                 rpc_id = aria_rpc.aria2.addTorrent(RPC_TOKEN, xmlrpc.client.Binary(bt), [], {"dir":dir_name})
                 updated.append((seq, "%s/%s/%s" % ("video", bangumi_name, bt_video_name), rpc_id))
                 continue
         f_name = file_name % seq
         name = download_name % seq
-        regex4 = r'\<a href="(.+)" target="\_blank" rel="nofollow".+width=\"16\" height=\"16\" \/\>.+Raws.+%02d.+1920x1080.+\.torrent' % seq
-        regex3 = r'\<a href="(.+)" target="\_blank" rel="nofollow".+width=\"16\" height=\"16\" \/\>.+Raws.+%02d.+1080p.+\.torrent' % seq
-        regex2 = r'\<a href="(.+)" target="\_blank" rel="nofollow".+width=\"16\" height=\"16\" \/\>.+Raws.+%02d.+Baha.+1080p.+\.torrent' % seq
+        regex4 = r'\<a href="(.+)" target="\_blank" rel="nofollow".+width=\"16\" height=\"16\" \/\>.+Raws.+[^0-9A-DF-Za-z]%02d[^0-9A-Za-z].+1920x1080.+\.torrent' % seq
+        regex3 = r'\<a href="(.+)" target="\_blank" rel="nofollow".+width=\"16\" height=\"16\" \/\>.+Raws.+[^0-9A-DF-Za-z]%02d[^0-9A-Za-z].+1080p.+\.torrent' % seq
+        regex2 = r'\<a href="(.+)" target="\_blank" rel="nofollow".+width=\"16\" height=\"16\" \/\>.+Raws.+[^0-9A-DF-Za-z]%02d[^0-9A-Za-z].+Baha.+1080p.+\.torrent' % seq
         regex = r'\<a href="(.+)" target="\_blank" rel="nofollow".+%s' % name
         x = re.findall(regex, data)
         if len(x) == 0:
@@ -70,8 +70,7 @@ async def download_bt(site, url, download_name, bangumi_name, downloaded_ep, bid
         bt = opener.open(bt_url)
         bt = bt.read()
         video_name = "%s%02d" % (bangumi_name, seq)
-        torrent = bencodepy.decode(bt)
-        bt_video_name = torrent[b'info'][b'name'].decode("utf-8")
+        bt_video_name = get_bt_files(bt)[0]
         ext = bt_video_name.split(".")[-1]
         rpc_id = aria_rpc.aria2.addTorrent(RPC_TOKEN, xmlrpc.client.Binary(bt), [], {"dir":dir_name})
         updated.append((seq, "%s/%s/%s" % ("video", bangumi_name, bt_video_name), rpc_id))
@@ -91,8 +90,7 @@ def download_single_bt(site, torrent_url, bangumi_name):
     bt = opener.open(bt_url)
     bt = bt.read()
     rpc_id = aria_rpc.aria2.addTorrent(RPC_TOKEN, xmlrpc.client.Binary(bt), [], {"dir":dir_name})
-    torrent = bencodepy.decode(bt)
-    bt_video_name = torrent[b'info'][b'name'].decode("utf-8")
+    bt_video_name = get_bt_files(bt)[0]
     ext = bt_video_name.split(".")[-1]
     video_path = "%s/%s/%s" % ("video", bangumi_name, bt_video_name)
     # print(video_path)
@@ -155,7 +153,7 @@ def parse_bts(bts):
     tmp = {}
     for bt in bts:
         btn = bt[1]
-        pattern_regex = re.compile(r'(?=([^0-9A-Za-z][0-9]{1,2}[^0-9A-Za-z]))')
+        pattern_regex = re.compile(r'(?=([^0-9A-DF-Za-z][0-9]{1,2}[^0-9A-Za-z]))')
         flg = 0
         if btn[1:11] == "SubsPlease":
             continue
@@ -190,8 +188,8 @@ def parse_bts(bts):
                 bt_patterns[pat].append(m.group(1))
                 tmp[bt[1]] = bt[0]
                 flg = 1
-            if flg == 0 and bt[1] not in single_bts:
-                single_bts[bt[1]] = bt[0]
+        if flg == 0 and bt[1] not in single_bts:
+            single_bts[bt[1]] = bt[0]
     bt_p = []
     for k in bt_patterns:
         if len(bt_patterns[k]) == 1 and bt_patterns[k][0] not in single_bts:

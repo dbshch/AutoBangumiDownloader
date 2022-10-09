@@ -29,12 +29,17 @@ async def getEpisodes(bid):
     eps = []
     for ep in updates:
         if (ep[4] != '1'):
-            r = s.aria2.tellStatus(RPC_TOKEN, ep[4])
-            progress = int(r['completedLength'])/int(r['totalLength'])
-            if progress == 1:
+            try:
+                r = s.aria2.tellStatus(RPC_TOKEN, ep[4])
+                progress = int(r['completedLength'])/int(r['totalLength'])
+                if progress == 1:
+                    update_sql = "UPDATE Episodes SET `downloaded`='1' WHERE `epid`=%d" % int(ep[5])
+                    await DBupdate(update_sql)
+                eps.append((ep[0], ep[1], ep[2], '-'.join(str(ep[3]).split(' ')[0].split('-')[1:]), int(progress * 100)))
+            except:
                 update_sql = "UPDATE Episodes SET `downloaded`='1' WHERE `epid`=%d" % int(ep[5])
                 await DBupdate(update_sql)
-            eps.append((ep[0], ep[1], ep[2], '-'.join(str(ep[3]).split(' ')[0].split('-')[1:]), int(progress * 100)))
+                eps.append((ep[0], ep[1], ep[2], '-'.join(str(ep[3]).split(' ')[0].split('-')[1:]), 100))
         else:
             eps.append((ep[0], ep[1], ep[2], '-'.join(str(ep[3]).split(' ')[0].split('-')[1:]), 100))
     return eps
@@ -90,6 +95,9 @@ class SubmitHandler(tornado.web.RequestHandler):
         bangumi_name = self.get_argument("bangumi_name")
         url = self.get_argument("url")
         download_name = self.get_argument("download_name")
+        if bangumi_name == "" or url == "" or download_name == "":
+            self.write("Wrong parameters")
+            return
         updated = await download_bt(site, url, download_name, bangumi_name, 0)
         print(updated)
         cover = get_cover(site, url)
@@ -113,6 +121,9 @@ class ParseHandler(tornado.web.RequestHandler):
         site = site[0][0]
         bangumi_name = self.get_argument("bangumi_name")
         url = self.get_argument("url")
+        if bangumi_name == "" or url == "":
+            self.write("Wrong parameters")
+            return
         (cover_path, bts) = fetch_bts(site, url)
         (single_bts, bt_p) = parse_bts(bts)
         self.render("select_res.html", sub_url=SUB_URL,
@@ -126,6 +137,9 @@ class AddBTHandler(tornado.web.RequestHandler):
         url = self.get_argument("url")
         bangumi_url = self.get_argument("bangumi_url")
         cover = self.get_argument("cover")
+        if bangumi_name == "" or url == "" or bangumi_url == "":
+            self.write("Wrong parameters")
+            return
         download_single_bt(site, url, bangumi_name)
 
         sql = "INSERT INTO `Bangumi`(`url`, `bt_pattern`, `bangumi_name`, `cover`, `ended`, `direct`) VALUES ('%s','%s', '%s', '%s', 1, 1)" % (bangumi_url, bangumi_name, bangumi_name, cover)
@@ -159,6 +173,10 @@ class RefreshHandler(tornado.web.RequestHandler):
         await download_bangumi()
         self.redirect(SUB_URL)
 
+class AddBangumiHandler(tornado.web.RequestHandler):
+    async def get(self):
+        self.render("add.html", sub_url=SUB_URL)
+
 # class BangumiEditHandler(tornado.web.RequestHandler):
 #     async def get(self):
 #         self.render("edit.html", bangumis=bangumis)
@@ -181,6 +199,7 @@ class Application(tornado.web.Application):
             (r"/bangumi/([0-9]+)", BangumiHandler),
             (r"/manual/([0-9]+)", ManualAddHandler),
             (r"/manual_add_bt", ManualAddBTHandler),
+            (r"/add", AddBangumiHandler),
             # (r"/status", StatusHandler),
             # (r"/edit", BangumiEditHandler),
             # (r"/delete", BangumiDeleteHandler),
